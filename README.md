@@ -1,2 +1,2 @@
-# apriori_algorithm
+# apriori-algorithm
 Apriori algorithm
