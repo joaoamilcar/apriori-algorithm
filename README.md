@@ -1,2 +1,2 @@
 # apriori-algorithm
-Apriori algorithm
+Association rules with Apriori algorithm
