@@ -8,26 +8,102 @@ class Apriori:
         self.smin = smin # valor mínimo de suporte admitido para uma regra
         self.cmin = cmin # valor mínimo de confiança admitido para uma regra
 
-    def run(self):
-        self.cif()
-
-    # conjunto de itens frequentes
-    def cif(self):
+    def get_cif(self):
         k = 2
+        cif_dict = {}
+        candidates = list(self.items.keys())
+        # candidates = list(combinations(self.items.keys(), 1))
 
-        cif = [[0 for x in range(2)] for y in range(len(self.items))]
+        print("candidates",candidates)
 
-        for key in self.items:
-            cif[key - 1][0] = key
-            cif[key - 1][1] = self.suporte([key])
+        for candidate in candidates:
+            # first attribution
+            if (k - 1) not in cif_dict:
+                cif_dict[k - 1] = []
 
-        lista = list(combinations(self.items.keys(), 2))
-        print(lista)
+            if self.suporte([candidate]) >= self.smin:
+                newCif = cif_dict.get(k - 1)
+                newCif.append(candidate)
+                cif_dict = {k - 1: newCif}
 
-        # for e in lista:
-        #     self.suporte(e)
+        print("dict", cif_dict)
 
-        print(cif)
+        while cif_dict.get(k - 1) != None:
+            group_list = self.group(cif_dict.get(k - 1), k)
+            # print("groups", k, group_list)
+
+            for candidate in group_list:
+                list_combinations = combinations(candidate, k - 1)
+
+                for tuple in list_combinations:
+                    if tuple not in cif_dict.get(k - 1):
+                        pass
+                        # groups.remove(c) # poda
+
+            for candidate in group_list:
+                # first attribution
+                if k not in cif_dict:
+                    cif_dict[k] = []
+
+                if self.suporte(candidate) >= self.smin:
+                    newCif = cif_dict.get(k)
+                    newCif.append(candidate)
+                    cif_dict[k] = newCif
+
+            k += 1
+
+            print("dict", cif_dict)
+
+
+        # cif = {}
+        #
+        # for candidates in L:
+        #     # first assignment
+        #     if (k - 1) not in cif:
+        #         cif[k - 1] = []
+        #
+        #     if self.suporte([candidates]) >= self.smin:
+        #         newCif = cif.get(k - 1)
+        #         newCif.append(candidates)
+        #         cif = {k - 1: newCif}
+        #
+        # print("cif", cif)
+        #
+        # lista = list(combinations(cif.get(1), 2))
+        # print(lista)
+        # print(len(lista))
+
+    def group(self, L, k):
+        print("quero:")
+        print("L", L)
+        print("k", k)
+
+        SC = list(combinations(L, 2))
+        print("SC", SC)
+        resultSet = ()
+
+        if k > 2:
+            for tuple in L:
+                resultSet = resultSet + tuple
+
+            print("listanova", list(combinations(set(resultSet), k)))
+            return list(combinations(set(resultSet), k))
+
+
+        # if k > 2:
+        #     for g in SC:
+        #         lista = []
+        #         for tuple in g:
+        #             lista = lista + list(tuple)
+        #         print("lista", lista)
+        #         # resultSet.append(lista)
+        #         resultSet.append(set(lista))
+
+        print("resultSet", resultSet)
+        print("listanova", list(combinations(set(resultSet), k)))
+
+
+        return SC
 
     def suporte(self, rule):
         count = 0
@@ -36,4 +112,4 @@ class Apriori:
             if set(rule).issubset(set(value)):
                 count += 1
 
-        return count
+        return count / len(self.transactions)
