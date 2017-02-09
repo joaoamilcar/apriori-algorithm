@@ -78,15 +78,15 @@ class Apriori:
         print("L", L)
         print("k", k)
 
-        SC = list(combinations(L, 2))
-        print("SC", SC)
+        LC = list(combinations(L, 2))
+        print("candidates", LC)
         resultSet = ()
 
         if k > 2:
             for tuple in L:
                 resultSet = resultSet + tuple
 
-            print("listanova", list(combinations(set(resultSet), k)))
+            print("candidates", list(combinations(set(resultSet), k)))
             return list(combinations(set(resultSet), k))
 
 
@@ -99,11 +99,8 @@ class Apriori:
         #         # resultSet.append(lista)
         #         resultSet.append(set(lista))
 
-        print("resultSet", resultSet)
-        print("listanova", list(combinations(set(resultSet), k)))
 
-
-        return SC
+        return LC
 
     def suporte(self, rule):
         count = 0
