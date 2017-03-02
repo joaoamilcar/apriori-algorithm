@@ -1,13 +1,19 @@
 from itertools import combinations
+from builtins import print
 
 
 class Apriori:
     def __init__(self, items, transactions, min_s, min_c):
         self.items = items
         self.transactions = transactions
-        self.frequent_itemset = {1: []}
+        self.frequent_itemset_dict = {1: []}
         self.min_s = min_s # minimum support value for a rule
         self.min_c = min_c # minimum confidence value for a rule
+
+    def run(self):
+        frequent_itemset = self.get_frequent_itemset()
+
+        print(frequent_itemset)
 
     def get_frequent_itemset(self):
         k = 2
@@ -16,35 +22,35 @@ class Apriori:
 
         for c in candidates:
             if self.support([c]) >= self.min_s:
-                new_list = self.frequent_itemset.get(k - 1)
+                new_list = self.frequent_itemset_dict.get(k - 1)
                 new_list.append(c)
-                self.frequent_itemset = {k - 1: new_list}
+                self.frequent_itemset_dict = {k - 1: new_list}
 
-        print("frequent itemset", self.frequent_itemset)
+        print("frequent itemset dict", self.frequent_itemset_dict)
 
-        while self.frequent_itemset.get(k - 1) != None:
+        while self.frequent_itemset_dict.get(k - 1) != None:
             print("# -----------------------")
-            candidates_list = group(self.frequent_itemset.get(k - 1), k)
+            candidates = group(self.frequent_itemset_dict.get(k - 1), k)
 
-            for c in candidates_list:
+            for c in candidates:
                 frequent = True
 
                 if k > 2:
                     frequent = self.is_frequent_candidate(c, k)
 
                 if frequent:
-                    # first attribution. initialize key k with an empty list
-                    if k not in self.frequent_itemset:
-                        self.frequent_itemset[k] = []
+                    if k not in self.frequent_itemset_dict:
+                        self.frequent_itemset_dict[k] = [] # initialize key k with an empty list
 
                     if self.support(c) >= self.min_s:
-                        new_list = self.frequent_itemset.get(k)
+                        new_list = self.frequent_itemset_dict.get(k)
                         new_list.append(c)
-                        self.frequent_itemset[k] = new_list
+                        self.frequent_itemset_dict[k] = new_list
 
+            print("frequent itemset dict", self.frequent_itemset_dict)
             k += 1
 
-            print("frequent itemset", self.frequent_itemset)
+        return self.frequent_itemset_dict.get(k - 2)
 
     # pruning
     def is_frequent_candidate(self, candidate, k):
@@ -54,8 +60,8 @@ class Apriori:
         for tuple in combinations_list:
             print("tuple", tuple)
 
-            if tuple not in self.frequent_itemset.get(k - 1):
-                print("not in", self.frequent_itemset.get(k - 1))
+            if tuple not in self.frequent_itemset_dict.get(k - 1):
+                print("not in", self.frequent_itemset_dict.get(k - 1))
                 return False
 
         return True
@@ -68,6 +74,12 @@ class Apriori:
                 count += 1
 
         return count / len(self.transactions)
+
+    def confidence(self):
+        pass
+
+    def lift(self):
+        pass
 
 
 def group(tuples_list, k):
