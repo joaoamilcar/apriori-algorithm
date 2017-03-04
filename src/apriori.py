@@ -1,4 +1,4 @@
-from itertools import combinations
+from itertools import combinations, chain
 from builtins import print
 
 
@@ -13,7 +13,7 @@ class Apriori:
     def run(self):
         frequent_itemset = self.get_frequent_itemset()
 
-        print(frequent_itemset)
+        self.get_association_rules(frequent_itemset);
 
     def get_frequent_itemset(self):
         k = 2
@@ -66,6 +66,18 @@ class Apriori:
 
         return True
 
+    def get_association_rules(self, itemset):
+        partitions = lambda tup: chain.from_iterable(combinations(tup, x) for x in range(1, len(tup))) # proper item not included
+
+        for item in itemset:
+            print("# -----------------------")
+            print(list(partitions(item)))
+            for p in partitions(item):
+                if self.confidence(item, p) >= self.min_c:
+                    print("rule", p, "->", tuple(set(item) - set(p)))
+                    print("confidence", self.confidence(item, p))
+                    print("lift", self.lift(item, p, set(item) - set(p)))
+
     def support(self, rule):
         count = 0
 
@@ -75,11 +87,11 @@ class Apriori:
 
         return count / len(self.transactions)
 
-    def confidence(self):
-        pass
+    def confidence(self, rule, antecedent):
+        return self.support(rule) / self.support(antecedent)
 
-    def lift(self):
-        pass
+    def lift(self, rule, antecedent, consequent):
+        return self.support(rule) / (self.support(antecedent) * self.support(consequent))
 
 
 def group(tuples_list, k):
