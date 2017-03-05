@@ -12,23 +12,13 @@ class Apriori:
 
     def run(self):
         frequent_itemset = self.get_frequent_itemset()
-
-        self.get_association_rules(frequent_itemset);
+        self.get_association_rules(frequent_itemset)
 
     def get_frequent_itemset(self):
         k = 2
-        candidates = list(self.items.keys())
-        print("candidates", candidates)
+        self.initialize_frequent_itemset()
 
-        for c in candidates:
-            if self.support([c]) >= self.min_s:
-                new_list = self.frequent_itemset_dict.get(k - 1)
-                new_list.append(c)
-                self.frequent_itemset_dict = {k - 1: new_list}
-
-        print("frequent itemset dict", self.frequent_itemset_dict)
-
-        while self.frequent_itemset_dict.get(k - 1) != None:
+        while self.frequent_itemset_dict.get(k - 1) is not None:
             print("# -----------------------")
             candidates = group(self.frequent_itemset_dict.get(k - 1), k)
 
@@ -51,6 +41,17 @@ class Apriori:
             k += 1
 
         return self.frequent_itemset_dict.get(k - 2)
+
+    def initialize_frequent_itemset(self):
+        candidates = list(combinations(self.items.keys(), 1))
+        print("candidates", candidates)
+
+        for c in candidates:
+            if self.support(c) >= self.min_s:
+                new_list = self.frequent_itemset_dict.get(1)
+                new_list.append(c)
+                self.frequent_itemset_dict = {1: new_list}
+        print("frequent itemset dict", self.frequent_itemset_dict)
 
     # pruning
     def is_frequent_candidate(self, candidate, k):
@@ -95,14 +96,10 @@ class Apriori:
 
 
 def group(tuples_list, k):
-    if k > 2:
-        result_tuple = ()
+    result_tuple = ()
 
-        for t in tuples_list:
-            result_tuple = result_tuple + t
+    for t in tuples_list:
+        result_tuple = result_tuple + t
 
-        print("candidates", list(combinations(set(result_tuple), k)))
-        return list(combinations(set(result_tuple), k))
-
-    print("candidates", list(combinations(tuples_list, 2)))
-    return list(combinations(tuples_list, 2))
+    print("candidates", list(combinations(set(result_tuple), k)))
+    return list(combinations(set(result_tuple), k))
