@@ -19,7 +19,7 @@ class Apriori:
         self.initialize_frequent_itemset()
 
         while self.frequent_itemset_dict.get(k - 1) is not None:
-            print("# -----------------------")
+            print("# ------------------------")
             candidates = group(self.frequent_itemset_dict.get(k - 1), k)
 
             for c in candidates:
@@ -71,7 +71,7 @@ class Apriori:
         partitions = lambda tup: chain.from_iterable(combinations(tup, x) for x in range(1, len(tup))) # proper item not included
 
         for item in itemset:
-            print("# -----------------------")
+            print("# ------------------------")
             print(list(partitions(item)))
             for p in partitions(item):
                 if self.confidence(item, p) >= self.min_c:
